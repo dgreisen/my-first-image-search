@@ -128,14 +128,12 @@ body {
                 <input v-model="searchTerm" id="search" autocomplete="off" ref="search" v-on:blur="onBlurSearch"/>
                 <input type="submit" value="&#x1f50d;" :disabled="!selectableTerm" tabindex="-1" />
             </form>
-            <div class="letterHelp" v-if="letterHelp">
-                <img v-bind:src="'./keyboard/' + letterHelp + '.png'"></image>
-            </div>
+            <img  v-if="letterHelp" v-bind:src="'./keyboard/' + letterHelp + '.png'"></image>
         </div>
         <div class="sidebar" tabindex="-1" v-if="!AutocompleteOpen">
             <a href="#" v-for="image in selectedTerm['results']" v-on:focus="onItemFocus(image)" v-bind:ref="image['thumbnail']">
                 <figure class="searchItem" v-bind:class="{selected: image == focusedImage }">
-                    <img v-bind:src="image['thumbnail']"></image>
+                    <img v-bind:src="image.thumbnail"></image>
                     <!-- <figcaption><span class="captionMatch">{{ image['match'] }}</span><span class="captionRemainder">{{ image['remainder'] }}</span></figcaption> -->
                 </figure>
             </a>
@@ -262,6 +260,7 @@ body {
                     console.log('refocus')
                     this.$refs.search.focus();
                 }
+                setTimeout(() => {this.$refs.search.focus();});
             }
         }
         })
