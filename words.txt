@@ -26,9 +26,11 @@ bowhead | bowhead whale
 bread
 bridge
 broccoli
+cake
 camping | camping family
 canoe
 carrot | carrot vegetable
+castle
 cat
 caterpillar
 cello
@@ -46,12 +48,15 @@ coral reef
 cow
 crab
 crystal | crystal rock
+cupcake
 dam
 dance | ballroom dance
 dear
+desert | high desert
 desk
 dog
 dolphin
+drill
 duck
 dump truck
 eagle
@@ -71,6 +76,7 @@ fish
 flower
 fly
 forest
+fort
 fox
 frog
 garbage truck
@@ -86,6 +92,8 @@ gorilla
 grape
 greyhound
 hammer
+hands
+hippo
 horse
 hot chocolate
 house
@@ -112,6 +120,7 @@ merry go round
 mesa | mesa rock formations
 mezuzah
 milk
+mill | grist mill
 minke | minke whale
 minnow
 monkey
@@ -154,6 +163,7 @@ rose | roses
 rowboat
 sailboat | tallship
 salmon
+sand
 satellite
 savanna
 saxophone
@@ -189,6 +199,7 @@ Texas
 tidepool
 tiger
 toad
+tools
 torah
 tractor
 train
