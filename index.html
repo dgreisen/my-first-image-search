@@ -7,6 +7,7 @@ body {
   padding: 0px;
   margin: 0;
 }
+
 .container {
   display: grid;
   grid-template-columns: 20% 80%;
@@ -25,6 +26,19 @@ body {
     padding: 10px;
     grid-area: header;
     background-color: aquamarine;
+    display: flex;
+
+}
+
+.header form {
+    margin-right: 20px;
+}
+
+.header img {
+    height: 100%;
+}
+.header input[type=submit] {
+    display: none;
 }
 
 .sidebar {
@@ -105,10 +119,6 @@ body {
 .searchItem.selectable {
     border-color: gold;
 }
-
-form {
-}
-
         </style>
     </head>
     <div id="app" class="container">
@@ -117,6 +127,9 @@ form {
                 <input v-model="searchTerm" id="search" autocomplete="off" ref="search" v-on:blur="onBlurSearch"/>
                 <input type="submit" value="&#x1f50d;" :disabled="!selectableTerm" tabindex="-1" />
             </form>
+            <div class="letterHelp" v-if="letterHelp">
+                <img v-bind:src="'./keyboard/' + letterHelp + '.png'"></image>
+            </div>
         </div>
         <div class="sidebar" tabindex="-1" v-if="!AutocompleteOpen">
             <a href="#" v-for="image in selectedTerm['results']" v-on:focus="onItemFocus(image)" v-bind:ref="image['thumbnail']">
@@ -179,6 +192,8 @@ form {
             images: _images,
             selectedTerm: "",
             focusedImage: null,
+            letterHelp: "",
+            letterHelpTimeout: null,
         },
         computed: {
             selectableTerm: function () {
@@ -224,20 +239,26 @@ form {
                 this.focusedImage = image;
             },
             onCompletionClick: function(image) {
-                words = image.query
+                words = image.query;
+                let nextLetter = 'enter';
                 if (image.remainder) {
-                    words += '. The next letter is '
-                    let nextLetter = image.remainder[0]
+                    words += '. The next letter is ';
+                    nextLetter = image.remainder[0];
                     if (nextLetter == ' ') {
-                        nextLetter = 'space'
+                        nextLetter = 'space';
                     }
                     words += nextLetter
                 }
-                console.log(words)
-                speak(words)
+                speak(words);
+                this.letterHelp = nextLetter;
+                if (this.letterHelpTimeout) {
+                    clearTimeout(this.letterHelpTimeout);
+                }
+                this.letterHelpTimeout = setTimeout(() => { this.letterHelp = ""; this.letterHelpTimeout = null; }, 3000);
             },
             onBlurSearch: function() {
                 if (this.AutocompleteOpen) {
+                    console.log('refocus')
                     this.$refs.search.focus();
                 }
             }
