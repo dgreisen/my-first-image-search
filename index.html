@@ -1,0 +1,281 @@
+<html>
+    <head>
+        <script src="./vue.js"></script>
+        <script src="./images.js"></script>
+<style>
+body {
+  padding: 0px;
+  margin: 0;
+}
+.container {
+  display: grid;
+  grid-template-columns: 20% 80%;
+  grid-template-rows: 100px 500px;
+  grid-template-areas:
+    "header header"
+    "sidebar main";
+  justify-items: stretch;
+  align-items: stretch;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: hidden;
+}
+
+.header {
+    padding: 10px;
+    grid-area: header;
+    background-color: aquamarine;
+}
+
+.sidebar {
+    grid-area: sidebar;
+    background-color: blueviolet;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    overflow-y: scroll;
+    align-items: start;
+
+}
+
+.autocomplete {
+    background-color: white;
+    grid-column-start: 1;
+    grid-column-end: -1;
+    grid-row-start: 2;
+    grid-row-end: -1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    overflow-y: scroll;
+    align-items: start;
+}
+
+.input {
+    font-size: 36px;
+}
+
+.main {
+  grid-area: main;
+  background-color: coral;
+  padding: 5%;
+  display: flex;
+  align-items: stretch;
+  align-content: center;
+  justify-content: center;
+  justify-items: stretch;
+}
+
+.main img {
+    object-fit: contain;
+    vertical-align: center;
+}
+
+.searchItem {
+    margin:10px;
+    padding: 5px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: white;
+}
+
+.autocomplete .searchItem img {
+    height: 180px;
+}
+
+.sidebar .searchitem {
+    border-color: blueviolet;
+}
+
+.sidebar .searchItem img {
+    width: 100%;
+}
+
+.searchItem .captionMatch {
+    font-weight: bold;
+}
+
+.searchItem .captionRemainder {
+    color: gray;
+}
+
+.searchItem.selected {
+    border-color: white;
+}
+.searchItem.selectable {
+    border-color: gold;
+}
+
+form {
+}
+
+        </style>
+    </head>
+    <div id="app" class="container">
+        <div class="header">
+            <form action="#" v-on:submit.prevent="selectImage">
+                <input v-model="searchTerm" id="search" autocomplete="off" ref="search" v-on:blur="onBlurSearch"/>
+                <input type="submit" value="&#x1f50d;" :disabled="!selectableTerm" tabindex="-1" />
+            </form>
+        </div>
+        <div class="sidebar" tabindex="-1" v-if="!AutocompleteOpen">
+            <a href="#" v-for="image in selectedTerm['results']" v-on:focus="onItemFocus(image)" v-bind:ref="image['thumbnail']">
+                <figure class="searchItem" v-bind:class="{selected: image == focusedImage }">
+                    <img v-bind:src="image['thumbnail']"></image>
+                    <!-- <figcaption><span class="captionMatch">{{ image['match'] }}</span><span class="captionRemainder">{{ image['remainder'] }}</span></figcaption> -->
+                </figure>
+            </a>
+        </div>
+        <div class="main" v-if="!AutocompleteOpen">
+            <img v-if="this.focusedImage" v-bind:src="this.focusedImage['thumbnail']"/>
+        </div>
+        <div class="autocomplete" v-if="AutocompleteOpen">
+            <figure v-for="image in filteredImages" class="searchItem" v-bind:class="{selectable: image['selectable']}" v-on:click="onCompletionClick(image)">
+                <img v-bind:src="image['src']"></image>
+                <figcaption><span class="captionMatch">{{ image['match'] }}</span><span class="captionRemainder">{{ image['remainder'] }}</span></figcaption>
+            </figure>
+        </div>
+    </div>
+    <script>
+        var app = new Vue({
+        el: '#app',
+        created() {
+            window.addEventListener('keydown', (e) => {
+                if (e.key == 'ArrowDown' || e.key == 'ArrowUp') {
+                    e.stopPropagation();
+                    return false;
+                }
+            })
+            window.addEventListener('keypress', (e) => {
+                if (e.key == 'ArrowDown' || e.key == 'ArrowUp') {
+                    e.stopPropagation();
+                    return false;
+                }
+            })
+            window.addEventListener('keyup', (e) => {
+                if (e.key == ' ') {
+                    speak('space')
+                } else if (e.key.length == 1 && e.key >= 'A' && e.key <= 'z') {
+                    speak(e.key)
+                } else if (e.key == 'ArrowDown') {
+                    if (this.focusedImage.next) {
+                        this.$refs[this.focusedImage.next.thumbnail][0].focus();
+                    }
+                    e.stopPropagation();
+                    return false;
+                } else if (e.key == 'ArrowUp') {
+                    if (this.focusedImage.prev) {
+                        this.$refs[this.focusedImage.prev.thumbnail][0].focus();
+                    } else {
+                        this.$refs.search.focus();
+                    }
+                    e.stopPropagation();
+                    return false;
+                }
+            });
+        },
+        data: {
+            searchTerm: "",
+            images: _images,
+            selectedTerm: "",
+            focusedImage: null,
+        },
+        computed: {
+            selectableTerm: function () {
+                let selectableTerms =  this.filteredImages.filter((x) => x['selectable']);
+                if (selectableTerms) {
+                    return selectableTerms[0];
+                } else {
+                    return null;
+                }
+            },
+            filteredImages: function () {
+                if (this.searchTerm == "") {
+                    return [];
+                } else {
+                    return this.images.filter((x) => x['query'].indexOf(this.searchTerm.toLowerCase()) == 0).map((x) => {
+                        let i = this.searchTerm.length;
+                        return {match: x.query.slice(0,i), remainder: x.query.slice(i), query: x.query, src: x['results'][0]['thumbnail'], selectable: this.searchTerm.toLowerCase() == x['query'], data: x}
+                    })
+                }
+            },
+            AutocompleteOpen: function () {
+                return !(this.selectedTerm && this.selectedTerm['query'].toLowerCase() == this.searchTerm.toLowerCase());
+            },
+        },
+        methods: {
+            selectImage: function() {
+                this.selectedTerm = this.selectableTerm['data'];
+                this.focusedImage = this.selectedTerm['results'][0];
+                if (!this.focusedImage.next) {
+                    let prev = null;
+                    for (const obj of this.selectedTerm['results']) {
+                        obj.prev = prev;
+                        if (prev) {
+                            prev.next = obj;
+                        }
+                        obj.next = null;
+                        prev = obj
+                    }
+                }
+                speak(this.selectedTerm.query)
+            },
+            onItemFocus: function(image) {
+                this.focusedImage = image;
+            },
+            onCompletionClick: function(image) {
+                words = image.query
+                if (image.remainder) {
+                    words += '. The next letter is '
+                    let nextLetter = image.remainder[0]
+                    if (nextLetter == ' ') {
+                        nextLetter = 'space'
+                    }
+                    words += nextLetter
+                }
+                console.log(words)
+                speak(words)
+            },
+            onBlurSearch: function() {
+                if (this.AutocompleteOpen) {
+                    this.$refs.search.focus();
+                }
+            }
+        }
+        })
+
+    function getCSSRule(ruleName) {
+        ruleName = ruleName.toLowerCase();
+        var result = null;
+        var find = Array.prototype.find;
+
+        find.call(document.styleSheets, styleSheet => {
+            result = find.call(styleSheet.cssRules, cssRule => {
+                return cssRule instanceof CSSStyleRule 
+                    && cssRule.selectorText.toLowerCase() == ruleName;
+            });
+            return result != null;
+        });
+        return result;
+    }
+
+    let containerRule = getCSSRule('.container')
+    function updateHeight() {
+        containerRule.style['grid-template-rows'] = "100px " + (window.innerHeight - 100) + "px";
+    }
+    window.onresize = updateHeight;
+    updateHeight();
+
+    function speak(words) {
+        let utter = new SpeechSynthesisUtterance();
+        utter.lang = 'en-US';
+        utter.text = words;
+        utter.volume = 1;
+
+        // speak
+        window.speechSynthesis.speak(utter);
+    }
+    </script>
+
+</html>
+
