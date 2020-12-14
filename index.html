@@ -27,7 +27,7 @@ body {
     grid-area: header;
     background-color: aquamarine;
     display: flex;
-
+    align-items: center;
 }
 
 .header form {
@@ -124,6 +124,7 @@ body {
     <div id="app" class="container">
         <div class="header">
             <form action="#" v-on:submit.prevent="selectImage">
+                <label for="search">Image Search:</label>
                 <input v-model="searchTerm" id="search" autocomplete="off" ref="search" v-on:blur="onBlurSearch"/>
                 <input type="submit" value="&#x1f50d;" :disabled="!selectableTerm" tabindex="-1" />
             </form>
