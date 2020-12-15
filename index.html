@@ -93,6 +93,9 @@ body {
     border-color: white;
 }
 
+.searchItem figure {
+    margin: 0px;
+}
 .autocomplete .searchItem img {
     height: 180px;
 }
@@ -142,10 +145,12 @@ body {
             <img v-if="this.focusedImage" v-bind:src="this.focusedImage['thumbnail']"/>
         </div>
         <div class="autocomplete" v-if="AutocompleteOpen">
-            <figure v-for="image in filteredImages" class="searchItem" v-bind:class="{selectable: image['selectable']}" v-on:click="onCompletionClick(image)">
-                <img v-bind:src="image['src']"></image>
-                <figcaption><span class="captionMatch">{{ image['match'] }}</span><span class="captionRemainder">{{ image['remainder'] }}</span></figcaption>
-            </figure>
+            <a href="#" v-for="image in filteredImages" class="searchItem">
+                <figure v-bind:class="{selectable: image['selectable']}" v-on:click="onCompletionClick(image)">
+                    <img v-bind:src="image['src']"></image>
+                    <figcaption><span class="captionMatch">{{ image['match'] }}</span><span class="captionRemainder">{{ image['remainder'] }}</span></figcaption>
+                </figure>
+            </a>
         </div>
     </div>
     <script>
