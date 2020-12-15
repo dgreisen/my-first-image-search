@@ -212,9 +212,9 @@ body {
                 if (this.searchTerm == "") {
                     return [];
                 } else {
-                    return this.images.filter((x) => x['query'].indexOf(this.searchTerm.toLowerCase()) == 0).map((x) => {
+                    return this.images.filter((x) => x['query'].toLowerCase().indexOf(this.searchTerm.toLowerCase()) == 0).map((x) => {
                         let i = this.searchTerm.length;
-                        return {match: x.query.slice(0,i), remainder: x.query.slice(i), query: x.query, src: x['results'][0]['thumbnail'], selectable: this.searchTerm.toLowerCase() == x['query'], data: x}
+                        return {match: x.query.slice(0,i), remainder: x.query.slice(i), query: x.query, src: x['results'][0]['thumbnail'], selectable: this.searchTerm.toLowerCase() == x['query'].toLowerCase(), data: x}
                     })
                 }
             },
