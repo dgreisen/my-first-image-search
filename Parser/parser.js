@@ -58,7 +58,8 @@ $(document).ready(function(){
       largeURL = makeURL(rawThumbURL,largeWidth);     
       output += '    {"source": "' + sourceURL + '", "thumbnail": "' + thumbURL + '", "image": "' + largeURL + '"},\r\n';
     }
-    output += "  ]\r\n  }"
+	output = output.slice(0,-3);	//remove final comma
+    output += "\r\n  ]\r\n  }"
     $("#outputText").val(output);
   });
   

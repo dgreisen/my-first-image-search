@@ -1,0 +1,79 @@
+<html>
+
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/underscore@1.12.0/underscore-min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
+
+<script>
+$(document).ready(function(){
+
+	
+	$("#test").click(function(){
+		
+	});
+	
+	$("#append").click(function(){
+		console.log("appending");
+		//take the text and JSONify it
+		var imagesJS = "";
+		var _images = JSON.parse("[" + $("#imagesJS").val().slice($("#imagesJS").val().indexOf("{"),$("#imagesJS").val().lastIndexOf("}")+1) + "]");
+		var numWords = _images.length;
+		var newElement = JSON.parse($("#parserText").val());
+		var searchTerm = newElement.query
+		var output="";
+		var duplicate = 0;
+		var i=0;
+		
+		//output = "window._images = [\r\n";
+		for (i = 0; i < numWords; i++) {
+			// first check to see if the new word is in the existing word list
+			if(searchTerm.toLowerCase() == _images[i].query.toLowerCase()){
+				duplicate = 1;
+				if(confirm("This word already has pictures. Do you want to overwrite?") == 1){
+					console.log(searchTerm + " already in list, overwriting element " + i + " with new pictures");
+					_images[i]=newElement
+				}
+				else {
+					console.log(searchTerm + " already in list, keeping old pictures for element " + i);
+				}
+			}
+			else {
+				console.log("element " + i + " isn't a duplicate, no change");
+			}
+		}
+		//if the searchTerm isn't a duplicate, add it on to the end.
+		if(duplicate==0){
+			_images[numWords] = newElement;
+		}
+		
+		imagesJS = "window._images = " + JSON.stringify(_images)
+		$("#imagesJS").val(imagesJS);
+		$("#parserText").val("");
+		
+	});
+	
+	$("#save").click(function(){
+		var blob = new Blob([$("#imagesJS").val()],{type:"text/plain;charset=utf-8"});
+		saveAs(blob, "images.js");
+	});	
+	
+});
+</script>
+</head>
+
+<body>
+<h1>images.js rebuilder</h1>
+
+<form>
+<label for="imagesJS">images.js</label><br>
+<textarea rows="10" cols="200" id="imagesJS" name="imagesJS"></textarea><br><br>
+<label for="parserText">Text to add to images.js (from parser):</label><br>
+<textarea rows="10" cols="200" id="parserText" name="parserText"></textarea><br>
+</form>
+
+<button id="append">Append</button>
+<br><br>
+<button id="save">Save as images.js</button>
+
+<br><br><br><br><br><button id="test">test</button>
