@@ -3,7 +3,7 @@ $(document).ready(function(){
   var largeWidth=1500;
   
   //insert HTML into page
-  $("#toc").after('<div style="border:solid 2px black"><br><form><label for="searchTerm">What do you want the search term to be?</label><input type="text" id="searchTerm" name="searchTerm"></form><br><p>The blue image will be the primary image; it is the first image in the list and the one that is shown while the word is being typed. The green images will be shown, in a random order, after the word is entered.</p><p>Double-click inside the border to make a picture the primary image. Single click inside the border to toggle an image between red and green.</p><br><button id="selectAll">Select All</button><button id="unSelectAll">Unselect All (except blue)</button><br><br><button id="parse">Parse</button><br><br><form><label for="outputText">Text to add to images.js:</label><br><textarea rows="10" cols="200" id="outputText" name="outputText"></textarea></form><br><button id="copy" name="copy">Copy text to clipboard</button><br><p>the above text needs to be pasted into your images.js file. Like so:</p><samp>window._images = [<br><i>  PASTE HERE</i><br>]</samp></div>');
+  $("#toc").after('<div style="border:solid 2px black"><br><form><label for="searchTerm">What do you want the search term to be?</label><input type="text" id="searchTerm" name="searchTerm"></form><br><p>The blue image will be the primary image; it is the first image in the list and the one that is shown while the word is being typed. The green images will be shown, in a random order, after the word is entered.</p><p>Double-click inside the border to make a picture the primary image. Single click inside the border to toggle an image between red and green.</p><br><button id="selectAll">Select All</button><button id="unSelectAll">Unselect All (except blue)</button><br><br><button id="parse">Parse</button><br><br><form><label for="outputText">Text to add to images.js:</label><br><textarea rows="10" cols="200" id="outputText" name="outputText"></textarea></form><br><!--<button id="copy" name="copy">Copy text to clipboard</button><br><p>the above text needs to be pasted into your images.js file. Like so:</p><samp>window._images = [<br><i>  PASTE HERE</i><br>]</samp>--></div>');
 
 
   $("ul li.gallerybox").css({"color": "green", "border": "2px solid green"});
@@ -61,6 +61,10 @@ $(document).ready(function(){
 	output = output.slice(0,-3);	//remove final comma
     output += "\r\n  ]\r\n  }"
     $("#outputText").val(output);
+	
+	//send to clipboard
+	$("#outputText").select();
+    document.execCommand("copy");
   });
   
   $("#selectAll").click(function(){
