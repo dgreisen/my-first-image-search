@@ -212,6 +212,11 @@ figcaption {
                 }
             });
         },
+        mounted() {
+            this.$nextTick(function() {
+                this.$refs.search.focus();
+            })
+        },
         data: {
             searchTerm: "",
             images: _images,
